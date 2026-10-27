@@ -75,14 +75,14 @@ public class EquiposController : ControllerBase
         if (!await _db.Categorias.AnyAsync(c => c.Id == dto.CategoriaId))
             return BadRequest("La categoría no existe.");
 
-        // Concurrencia optimista: la versión que el cliente leyó
-        _db.Entry(equipo).Property(e => e.RowVersion).OriginalValue = dto.RowVersion;
-
+      
         equipo.CodigoInventario = dto.CodigoInventario;
         equipo.Nombre = dto.Nombre;
         equipo.Descripcion = dto.Descripcion;
         equipo.CategoriaId = dto.CategoriaId;
         equipo.Estado = dto.Estado;
+
+        _db.Entry(equipo).Property(e => e.RowVersion).OriginalValue = dto.RowVersion;
 
         try
         {

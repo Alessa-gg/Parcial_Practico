@@ -1,0 +1,48 @@
+﻿@model EquiposMVC.Models.EquipoFormViewModel
+@{
+    ViewData["Title"] = "Editar equipo";
+}
+
+<h2>Editar equipo</h2>
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="RowVersion" />
+
+    <div class="mb-3">
+        <label asp-for="CodigoInventario" class="form-label"></label>
+        <input asp-for="CodigoInventario" class="form-control" />
+        <span asp-validation-for="CodigoInventario" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Descripcion" class="form-label"></label>
+        <input asp-for="Descripcion" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="CategoriaId" class="form-label"></label>
+        <select asp-for="CategoriaId" asp-items="ViewBag.Categorias" class="form-select"></select>
+        <span asp-validation-for="CategoriaId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Estado" class="form-label"></label>
+        <select asp-for="Estado" class="form-select">
+            <option value="Disponible">Disponible</option>
+            <option value="Prestado">Prestado</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-warning">Actualizar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

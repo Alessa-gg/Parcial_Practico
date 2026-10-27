@@ -1,0 +1,72 @@
+﻿@model EquiposMVC.Models.EquiposIndexViewModel
+@{
+    ViewData["Title"] = "Equipos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Equipos</h2>
+    <a asp-action="Create" class="btn btn-primary">Nuevo equipo</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input name="texto" value="@Model.Texto" class="form-control" placeholder="Nombre o código..." />
+    </div>
+    <div class="col-md-3">
+        <select name="categoriaId" asp-items="ViewBag.Categorias" class="form-select">
+            <option value="">Todas las categorías</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="estado" class="form-select">
+            <option value="">Todos los estados</option>
+            @foreach (var s in new[] { "Disponible", "Prestado", "Mantenimiento" })
+            {
+                <option value="@s" selected="@(Model.Estado == s)">@s</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-outline-secondary w-100">Filtrar</button>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr><th>Código</th><th>Nombre</th><th>Categoría</th><th>Estado</th><th></th></tr>
+    </thead>
+    <tbody>
+        @foreach (var e in Model.Items)
+        {
+            <tr>
+                <td>@e.CodigoInventario</td>
+                <td>@e.Nombre</td>
+                <td>@e.Categoria</td>
+                <td>@e.Estado</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@e.Id" class="btn btn-sm btn-warning">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@e.Id" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
+        @if (!Model.Items.Any())
+        {
+            <tr><td colspan="5" class="text-center text-muted">No hay equipos que coincidan con el filtro.</td></tr>
+        }
+    </tbody>
+</table>
+
+<nav>
+    <ul class="pagination">
+        @for (var p = 1; p <= Model.TotalPaginas; p++)
+        {
+            <li class="page-item @(p == Model.Pagina ? "active" : "")">
+                <a class="page-link" asp-action="Index"
+                   asp-route-pagina="@p"
+                   asp-route-texto="@Model.Texto"
+                   asp-route-categoriaId="@Model.CategoriaId"
+                   asp-route-estado="@Model.Estado">@p</a>
+            </li>
+        }
+    </ul>
+</nav>
