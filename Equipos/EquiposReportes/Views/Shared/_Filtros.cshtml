@@ -1,0 +1,39 @@
+@model EquiposReportes.ViewModels.FiltroReporte
+@{
+    var categorias = (List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>)ViewData["Categorias"]!;
+    var mostrarFechas = (bool)(ViewData["MostrarFechas"] ?? true);
+    var mostrarUsuario = (bool)(ViewData["MostrarUsuario"] ?? false);
+}
+<form method="get" class="row g-2 mb-4 align-items-end">
+    @if (mostrarUsuario)
+    {
+        <div class="col-md-3">
+            <label class="form-label">Username</label>
+            <input name="username" value="@Model.Username" class="form-control" placeholder="Buscar usuario..." />
+        </div>
+    }
+    @if (mostrarFechas)
+    {
+        <div class="col-md-2">
+            <label class="form-label">Desde</label>
+            <input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Hasta</label>
+            <input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+    }
+    <div class="col-md-3">
+        <label class="form-label">Categoría</label>
+        <select name="categoriaId" class="form-select">
+            <option value="">Todas las categorías</option>
+            @foreach (var c in categorias)
+            {
+                <option value="@c.Value" selected="@(c.Value == Model.CategoriaId?.ToString())">@c.Text</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Filtrar</button>
+    </div>
+</form>

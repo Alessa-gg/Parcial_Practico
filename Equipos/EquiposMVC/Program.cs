@@ -5,7 +5,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews(o => o.Filters.Add<ApiExceptionFilter>());
+builder.Services.AddControllersWithViews(o =>
+{
+    o.Filters.Add<SesionRequeridaFilter>();
+    o.Filters.Add<ApiExceptionFilter>();
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession(o =>
@@ -26,7 +30,10 @@ builder.Services.AddHttpClient<EquipoService>(c => c.BaseAddress = apiUri)
     .AddHttpMessageHandler<AuthTokenHandler>();
 builder.Services.AddHttpClient<CategoriaService>(c => c.BaseAddress = apiUri)
     .AddHttpMessageHandler<AuthTokenHandler>();
-// Susan registra aquí sus servicios de la misma forma.
+builder.Services.AddHttpClient<AuthService>(c => c.BaseAddress = apiUri)
+    .AddHttpMessageHandler<AuthTokenHandler>();
+builder.Services.AddHttpClient<PrestamoService>(c => c.BaseAddress = apiUri)
+    .AddHttpMessageHandler<AuthTokenHandler>();
 
 var app = builder.Build();
 

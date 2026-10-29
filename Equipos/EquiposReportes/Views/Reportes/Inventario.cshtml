@@ -1,0 +1,45 @@
+@model ReporteViewModel<InventarioCategoriaVM>
+@{
+    ViewData["Title"] = "Inventario por categoría";
+    ViewData["Categorias"] = Model.Categorias;
+    ViewData["MostrarFechas"] = false;
+}
+
+<h2>Inventario por categoría</h2>
+<p class="text-muted">Cantidad actual de equipos por categoría y por estado.</p>
+
+<partial name="_Filtros" model="Model.Filtro" view-data="ViewData" />
+
+<table class="table table-striped">
+    <thead>
+        <tr><th>Categoría</th><th class="text-end">Disponibles</th><th class="text-end">Prestados</th><th class="text-end">Mantenimiento</th><th class="text-end">Total</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var i in Model.Items)
+        {
+            <tr>
+                <td>@i.Categoria</td>
+                <td class="text-end">@i.Disponibles</td>
+                <td class="text-end">@i.Prestados</td>
+                <td class="text-end">@i.Mantenimiento</td>
+                <td class="text-end fw-bold">@i.Total</td>
+            </tr>
+        }
+        @if (!Model.Items.Any())
+        {
+            <tr><td colspan="5" class="text-center text-muted">Sin datos.</td></tr>
+        }
+    </tbody>
+    @if (Model.Items.Any())
+    {
+        <tfoot>
+            <tr class="fw-bold">
+                <td>Total general</td>
+                <td class="text-end">@Model.Items.Sum(x => x.Disponibles)</td>
+                <td class="text-end">@Model.Items.Sum(x => x.Prestados)</td>
+                <td class="text-end">@Model.Items.Sum(x => x.Mantenimiento)</td>
+                <td class="text-end">@Model.Items.Sum(x => x.Total)</td>
+            </tr>
+        </tfoot>
+    }
+</table>

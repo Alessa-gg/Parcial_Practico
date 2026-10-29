@@ -1,0 +1,42 @@
+@model EquiposMVC.Models.PrestamoCreateViewModel
+@{
+    ViewData["Title"] = "Nuevo préstamo";
+}
+
+<h2>Nuevo préstamo</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="EquipoId" class="form-label"></label>
+        <select asp-for="EquipoId" asp-items="ViewBag.Equipos" class="form-select">
+            <option value="">Seleccione un equipo disponible...</option>
+        </select>
+        <span asp-validation-for="EquipoId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="UsuarioId" class="form-label"></label>
+        <select asp-for="UsuarioId" asp-items="ViewBag.Usuarios" class="form-select">
+            <option value="">Seleccione un usuario...</option>
+        </select>
+        <span asp-validation-for="UsuarioId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="FechaVencimiento" class="form-label"></label>
+        <input asp-for="FechaVencimiento" type="date" class="form-control" />
+        <div class="form-text">Máximo 7 días desde hoy.</div>
+        <span asp-validation-for="FechaVencimiento" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Observaciones" class="form-label"></label>
+        <input asp-for="Observaciones" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar préstamo</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

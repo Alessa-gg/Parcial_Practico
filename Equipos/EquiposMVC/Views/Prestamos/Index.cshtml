@@ -1,0 +1,72 @@
+@model EquiposMVC.Models.PrestamosIndexViewModel
+@{
+    var rol = Context.Session.GetString("Rol");
+    var puedeGestionar = rol == "Admin" || rol == "Docente";
+    ViewData["Title"] = rol == "Estudiante" ? "Mis préstamos" : "Préstamos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>@ViewData["Title"]</h2>
+    @if (puedeGestionar)
+    {
+        <a asp-action="Create" class="btn btn-primary">Nuevo préstamo</a>
+    }
+</div>
+
+@if (TempData["Ok"] != null)
+{
+    <div class="alert alert-success">@TempData["Ok"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<form method="get" class="mb-3">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="soloVencidos" name="soloVencidos" value="true"
+               checked="@Model.SoloVencidos" onchange="this.form.submit()" />
+        <label class="form-check-label" for="soloVencidos">Mostrar solo vencidos</label>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Equipo</th><th>Usuario</th><th>Préstamo</th><th>Vence</th><th>Devolución</th><th>Estado</th>
+            @if (puedeGestionar) { <th></th> }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model.Items)
+        {
+            <tr>
+                <td>@p.EquipoCodigo - @p.EquipoNombre</td>
+                <td>@p.Username</td>
+                <td>@p.FechaPrestamo.ToString("dd/MM/yyyy")</td>
+                <td>@p.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                <td>@(p.FechaDevolucion?.ToString("dd/MM/yyyy") ?? "—")</td>
+                <td>
+                    @if (p.FechaDevolucion != null) { <span class="badge bg-secondary">Devuelto</span> }
+                    else if (p.Vencido) { <span class="badge bg-danger">Vencido</span> }
+                    else { <span class="badge bg-success">Activo</span> }
+                </td>
+                @if (puedeGestionar)
+                {
+                    <td>
+                        @if (p.FechaDevolucion == null)
+                        {
+                            <form asp-action="Devolver" asp-route-id="@p.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Registrar devolución</button>
+                            </form>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+        @if (!Model.Items.Any())
+        {
+            <tr><td colspan="7" class="text-center text-muted">No hay préstamos para mostrar.</td></tr>
+        }
+    </tbody>
+</table>

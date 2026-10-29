@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EquiposAPI.Data;
 using EquiposAPI.Dtos;
 using EquiposAPI.Models;
@@ -10,7 +10,7 @@ namespace EquiposAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-// [Authorize]
+[Authorize]
 public class EquiposController : ControllerBase
 {
     private readonly AppDbContext _db;
@@ -48,7 +48,7 @@ public class EquiposController : ControllerBase
     }
 
     [HttpPost]
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(EquipoCreateDto dto)
     {
         if (await _db.Equipos.AnyAsync(e => e.CodigoInventario == dto.CodigoInventario))
@@ -64,7 +64,7 @@ public class EquiposController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, EquipoUpdateDto dto)
     {
         var equipo = await _db.Equipos.FindAsync(id);
@@ -97,7 +97,7 @@ public class EquiposController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var equipo = await _db.Equipos.FindAsync(id);

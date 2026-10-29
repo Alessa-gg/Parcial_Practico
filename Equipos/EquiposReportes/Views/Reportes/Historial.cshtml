@@ -1,0 +1,46 @@
+@model ReporteViewModel<HistorialUsuarioVM>
+@{
+    ViewData["Title"] = "Historial por usuario";
+    ViewData["Categorias"] = Model.Categorias;
+    ViewData["MostrarUsuario"] = true;
+}
+
+<h2>Historial por usuario</h2>
+<p class="text-muted">Todos los préstamos de los usuarios cuyo Username coincide con la búsqueda.</p>
+
+<partial name="_Filtros" model="Model.Filtro" view-data="ViewData" />
+
+@if (string.IsNullOrWhiteSpace(Model.Filtro.Username))
+{
+    <div class="alert alert-info">Escribe un Username para ver su historial.</div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr><th>Usuario</th><th>Equipo</th><th>Categoría</th><th>Préstamo</th><th>Vence</th><th>Devolución</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var h in Model.Items)
+            {
+                <tr>
+                    <td>@h.Username</td>
+                    <td>@h.Codigo - @h.Equipo</td>
+                    <td>@h.Categoria</td>
+                    <td>@h.FechaPrestamo.ToString("dd/MM/yyyy")</td>
+                    <td>@h.FechaVencimiento.ToString("dd/MM/yyyy")</td>
+                    <td>@(h.FechaDevolucion?.ToString("dd/MM/yyyy") ?? "—")</td>
+                    <td>
+                        @if (h.Estado == "Devuelto") { <span class="badge bg-secondary">Devuelto</span> }
+                        else if (h.Estado == "Vencido") { <span class="badge bg-danger">Vencido</span> }
+                        else { <span class="badge bg-success">Activo</span> }
+                    </td>
+                </tr>
+            }
+            @if (!Model.Items.Any())
+            {
+                <tr><td colspan="7" class="text-center text-muted">Sin préstamos para ese usuario.</td></tr>
+            }
+        </tbody>
+    </table>
+}

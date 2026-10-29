@@ -1,4 +1,5 @@
-﻿using EquiposMVC.Models;
+using EquiposMVC.Filters;
+using EquiposMVC.Models;
 using EquiposMVC.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -26,6 +27,9 @@ public class EquiposController : Controller
 
     public async Task<IActionResult> Index(string? texto, int? categoriaId, string? estado, int pagina = 1)
     {
+        // El Estudiante solo consulta equipos disponibles.
+        if (HttpContext.Session.GetString("Rol") == "Estudiante") estado = "Disponible";
+
         var todos = await _equipos.ListarAsync(texto, categoriaId, estado);
 
         var totalPaginas = Math.Max(1, (int)Math.Ceiling(todos.Count / (double)TamPagina));
@@ -44,6 +48,7 @@ public class EquiposController : Controller
         });
     }
 
+    [SoloRoles("Admin")]
     public async Task<IActionResult> Create()
     {
         await CargarCategoriasAsync();
@@ -51,6 +56,7 @@ public class EquiposController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [SoloRoles("Admin")]
     public async Task<IActionResult> Create(EquipoFormViewModel m)
     {
         if (ModelState.IsValid)
@@ -64,6 +70,7 @@ public class EquiposController : Controller
         return View(m);
     }
 
+    [SoloRoles("Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var e = await _equipos.ObtenerAsync(id);
@@ -83,6 +90,7 @@ public class EquiposController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
+    [SoloRoles("Admin")]
     public async Task<IActionResult> Edit(EquipoFormViewModel m)
     {
         if (ModelState.IsValid)
@@ -96,6 +104,7 @@ public class EquiposController : Controller
         return View(m);
     }
 
+    [SoloRoles("Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var e = await _equipos.ObtenerAsync(id);
@@ -103,6 +112,7 @@ public class EquiposController : Controller
     }
 
     [HttpPost, ActionName("Delete"), ValidateAntiForgeryToken]
+    [SoloRoles("Admin")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var (ok, error) = await _equipos.EliminarAsync(id);
