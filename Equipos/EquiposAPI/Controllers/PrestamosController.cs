@@ -1,4 +1,6 @@
-﻿using EquiposAPI.Data;
+using System.Security.Claims;
+using AutoMapper;
+using EquiposAPI.Data;
 using EquiposAPI.Dtos;
 using EquiposAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -9,20 +11,47 @@ namespace EquiposAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-// [Authorize]
+[Authorize]
 public class PrestamosController : ControllerBase
 {
     private readonly AppDbContext _db;
+    private readonly IMapper _mapper;
 
-    public PrestamosController(AppDbContext db)
+    public PrestamosController(AppDbContext db, IMapper mapper)
     {
         _db = db;
+        _mapper = mapper;
     }
 
-    // El GET de préstamos (filtrado por rol con el Id del token) lo implementa la Persona B.
+    // Admin y Docente ven todos los préstamos; el Estudiante solo los propios.
+    // El Id del usuario se toma SIEMPRE del token, nunca de un parámetro.
+    [HttpGet]
+    public async Task<ActionResult<List<PrestamoListDto>>> Get(bool soloVencidos = false)
+    {
+        var q = _db.Prestamos.AsNoTracking()
+            .Include(p => p.Equipo)
+            .Include(p => p.Usuario)
+            .AsQueryable();
+
+        if (!User.IsInRole("Admin") && !User.IsInRole("Docente"))
+        {
+            if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var usuarioId))
+                return Unauthorized();
+            q = q.Where(p => p.UsuarioId == usuarioId);
+        }
+
+        if (soloVencidos)
+        {
+            var hoy = DateTime.Today;
+            q = q.Where(p => p.FechaDevolucion == null && p.FechaVencimiento < hoy);
+        }
+
+        var lista = await q.OrderByDescending(p => p.FechaPrestamo).ToListAsync();
+        return _mapper.Map<List<PrestamoListDto>>(lista);
+    }
 
     [HttpPost]
-    // [Authorize(Roles = "Admin,Docente")]
+    [Authorize(Roles = "Admin,Docente")]
     public async Task<IActionResult> Registrar(PrestamoCreateDto dto)
     {
         var hoy = DateTime.Today;
@@ -64,7 +93,7 @@ public class PrestamosController : ControllerBase
     }
 
     [HttpPut("{id}/devolucion")]
-    // [Authorize(Roles = "Admin,Docente")]
+    [Authorize(Roles = "Admin,Docente")]
     public async Task<IActionResult> Devolver(int id)
     {
         var prestamo = await _db.Prestamos.Include(p => p.Equipo).FirstOrDefaultAsync(p => p.Id == id);

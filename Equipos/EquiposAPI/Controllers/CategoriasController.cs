@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using EquiposAPI.Data;
 using EquiposAPI.Dtos;
 using EquiposAPI.Models;
@@ -10,7 +10,7 @@ namespace EquiposAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-// [Authorize]
+[Authorize]
 public class CategoriasController : ControllerBase
 {
     private readonly AppDbContext _db;
@@ -37,7 +37,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPost]
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(CategoriaSaveDto dto)
     {
         if (await _db.Categorias.AnyAsync(c => c.Nombre == dto.Nombre))
@@ -50,7 +50,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, CategoriaSaveDto dto)
     {
         var cat = await _db.Categorias.FindAsync(id);
@@ -65,7 +65,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var cat = await _db.Categorias.FindAsync(id);
