@@ -1,0 +1,32 @@
+@model ReporteViewModel<TopEquipoVM>
+@{
+    ViewData["Title"] = "Top 5 equipos más prestados";
+    ViewData["Categorias"] = Model.Categorias;
+}
+
+<h2>Top 5 equipos más prestados</h2>
+<p class="text-muted">Conteo de préstamos por equipo dentro del rango de fechas seleccionado.</p>
+
+<partial name="_Filtros" model="Model.Filtro" view-data="ViewData" />
+
+<table class="table table-striped">
+    <thead>
+        <tr><th>#</th><th>Equipo</th><th>Categoría</th><th class="text-end">Préstamos</th></tr>
+    </thead>
+    <tbody>
+        @{ var n = 1; }
+        @foreach (var t in Model.Items)
+        {
+            <tr>
+                <td>@(n++)</td>
+                <td>@t.Codigo - @t.Equipo</td>
+                <td>@t.Categoria</td>
+                <td class="text-end fw-bold">@t.TotalPrestamos</td>
+            </tr>
+        }
+        @if (!Model.Items.Any())
+        {
+            <tr><td colspan="4" class="text-center text-muted">Sin préstamos en el rango seleccionado.</td></tr>
+        }
+    </tbody>
+</table>
