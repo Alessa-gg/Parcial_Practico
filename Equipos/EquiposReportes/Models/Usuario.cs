@@ -1,3 +1,6 @@
+﻿using System;
+using System.Collections.Generic;
+
 namespace EquiposReportes.Models;
 
 public partial class Usuario

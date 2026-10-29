@@ -1,11 +1,10 @@
+﻿using System;
+using System.Collections.Generic;
 using EquiposReportes.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EquiposReportes.Data;
 
-// Contexto generado con Scaffold-DbContext a partir de la base existente.
-// La cadena de conexión NO está en OnConfiguring: se registra por inyección de dependencias
-// en Program.cs usando ConnectionStrings:ReportesDb de User Secrets.
 public partial class EquiposDbContext : DbContext
 {
     public EquiposDbContext(DbContextOptions<EquiposDbContext> options)
@@ -45,8 +44,7 @@ public partial class EquiposDbContext : DbContext
 
             entity.HasOne(d => d.Categoria).WithMany(p => p.Equipos)
                 .HasForeignKey(d => d.CategoriaId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Equipos_Categorias_CategoriaId");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Prestamo>(entity =>
@@ -57,13 +55,11 @@ public partial class EquiposDbContext : DbContext
 
             entity.HasOne(d => d.Equipo).WithMany(p => p.Prestamos)
                 .HasForeignKey(d => d.EquipoId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Prestamos_Equipos_EquipoId");
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.Usuario).WithMany(p => p.Prestamos)
                 .HasForeignKey(d => d.UsuarioId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Prestamos_Usuarios_UsuarioId");
+                .OnDelete(DeleteBehavior.ClientSetNull);
         });
 
         modelBuilder.Entity<Usuario>(entity =>
