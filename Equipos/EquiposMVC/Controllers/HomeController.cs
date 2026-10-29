@@ -1,3 +1,4 @@
+using EquiposMVC.Filters;
 using EquiposMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -23,6 +24,7 @@ namespace EquiposMVC.Controllers
             return View();
         }
 
+        [SinSesion]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

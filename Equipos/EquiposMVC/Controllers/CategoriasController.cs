@@ -1,9 +1,11 @@
-﻿using EquiposMVC.Models;
+using EquiposMVC.Filters;
+using EquiposMVC.Models;
 using EquiposMVC.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EquiposMVC.Controllers;
 
+[SoloRoles("Admin")]
 public class CategoriasController : Controller
 {
     private readonly CategoriaService _svc;

@@ -1,4 +1,4 @@
-﻿using EquiposMVC.Services;
+using EquiposMVC.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -44,6 +44,8 @@ public class ApiExceptionFilter : IExceptionFilter
     {
         ViewName = nombre,
         StatusCode = status,
-        ViewData = new ViewDataDictionary(_metadata, context.ModelState)
+        ViewData = new ViewDataDictionary(_metadata, context.ModelState),
+        TempData = context.HttpContext.RequestServices
+            .GetRequiredService<ITempDataDictionaryFactory>().GetTempData(context.HttpContext)
     };
 }
